@@ -50,7 +50,7 @@ public class CourierLoginTest {
     }
 
     @Test
-    @DisplayName("Проверить, что курьер не может авторизоваться с значением логина null")
+    @DisplayName("Проверить, что курьер не может авторизоваться со значением логина null")
     @Description("Тест  /api/v1/courier/login")
     public void checkCourierLoginNull() {
         courierClient.create(courier);
@@ -68,6 +68,18 @@ public class CourierLoginTest {
         courierClient.create(courier);
 
         ValidatableResponse validatableResponse = courierClient.login(new CourierCredentials(courier.login, ""));
+
+        validatableResponse.assertThat().statusCode(400);
+        validatableResponse.assertThat().body("message", equalTo("Недостаточно данных для входа"));
+    }
+
+    @Test
+    @DisplayName("Проверить, что курьер не может авторизоваться с паролем null")
+    @Description("Тест /api/v1/courier/login")
+    public void checkCourierLoginPasswordNull(){
+        courierClient.create(courier);
+
+        ValidatableResponse validatableResponse = courierClient.login(new CourierCredentials(courier.login, null));
 
         validatableResponse.assertThat().statusCode(400);
         validatableResponse.assertThat().body("message", equalTo("Недостаточно данных для входа"));
@@ -99,5 +111,20 @@ public class CourierLoginTest {
         validatableResponse.assertThat().statusCode(404);
         validatableResponse.assertThat().body("message", equalTo("Учетная запись не найдена"));
     }
+
+    @Test
+    @DisplayName("Проверить, если авторизоваться под несуществующим пользователем, запрос возвращает ошибку.")
+    @Description("Тест /api/v1/courier/login")
+    public void checkCourierLoginNonExistent(){
+        String login = "qwertyu";
+        String password = "12346789";
+
+        ValidatableResponse validatableResponse = courierClient.login(new CourierCredentials(login, password));
+
+        validatableResponse.assertThat().statusCode(404);
+        validatableResponse.assertThat().body("message", equalTo("Учетная запись не найдена"));
+    }
+
+
 }
 

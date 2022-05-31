@@ -1,23 +1,54 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.qameta.allure.Step;
-import io.restassured.response.Response;
-import io.restassured.response.ValidatableResponse;
+import com.github.javafaker.Faker;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static io.restassured.RestAssured.given;
+import java.time.Instant;
+import java.util.List;
+import java.util.Locale;
 
 public class Order extends RestAssuredClient {
 
-    Response response;
-    private static final String ORDER_PATH = "api/v1/orders/";
+    public String firstName;
+    public String lastName;
+    public String address;
+    public String metroStation;
+    public String phone;
+    public int rentTime;
+    public String deliveryDate;
+    public String comment;
+    public List<String> color;
+    public static Instant time = Instant.now();
 
-    @Step("Создание заказа")
-    public Response createOrder(String [] color) throws JsonProcessingException {
+    public static Faker faker = new Faker(new Locale("ru"));
 
-        Map<String, Object> data = new HashMap<>();
+
+
+    public Order(String firstName, String lastName, String address, String metroStation, String phone, int rentTime, String deliveryDate, String comment, List<String> color) {
+        super();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.metroStation = metroStation;
+        this.phone = phone;
+        this.rentTime = rentTime;
+        this.deliveryDate = deliveryDate;
+        this.comment = comment;
+        this.color = color;;
+    }
+
+    public static Order createOrder(List<String> colorKind) {
+        final String firstName = faker.name().firstName();
+        final String lastName = faker.name().lastName();
+        final String address = faker.address().streetAddress();
+        final String metroStation = faker.address().streetName();
+        final String phone = faker.phoneNumber().phoneNumber();
+        final int rentTime = faker.number().numberBetween(0, 15);
+        final String deliveryDate = faker.date().toString();
+        final String comment = faker.rickAndMorty().quote();
+        final List<String> color = colorKind;
+        return new Order(firstName, lastName, address, metroStation, phone, rentTime,
+                deliveryDate, comment, color);
+
+
+       /* Map<String, Object> data = new HashMap<>();
         data.put( "firstName", "Naruto" );
         data.put( "lastName", "Uchiha" );
         data.put( "address", "Konoha, 142 apt." );
@@ -28,29 +59,7 @@ public class Order extends RestAssuredClient {
         data.put( "comment", "Uchiha" );
         data.put( "color", color);
         String json = new ObjectMapper().writeValueAsString(data);
+        */
 
-        return response = given()
-                .spec(getBaseSpec())
-                .body(json)
-                .when()
-                .post(ORDER_PATH);
-    }
-
-    @Step("Отменить заказ")
-    public ValidatableResponse deleteOrder(int orderTrack) {
-        return given()
-                .spec(getBaseSpec())
-                .when()
-                .delete(ORDER_PATH + "cancel/")
-                .then();
-    }
-
-    @Step("Получение списка заказов")
-    public ValidatableResponse getOrderList() {
-        return given()
-                .spec(getBaseSpec())
-                .when()
-                .get(ORDER_PATH)
-                .then();
     }
 }

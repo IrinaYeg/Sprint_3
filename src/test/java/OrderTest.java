@@ -16,11 +16,11 @@ public class OrderTest {
     private final String color;
     private int orderTrack;
 
-    Order order = new Order();
+    OrderClient orderClient = new OrderClient();
 
     @After
     public void tearDown() {
-        order.deleteOrder( orderTrack);
+        orderClient.deleteOrder( orderTrack);
     }
 
     public OrderTest(String color) {
@@ -41,7 +41,7 @@ public class OrderTest {
     @DisplayName("Проверка, что можно создать заказ с разными вариантами: BLACK или GREY, оба цвета, не указывать цвет")
     @Description("Тест  POST /api/v1/orders")
     public void checkCreateOrderWithBlack() throws JsonProcessingException {
-        Response response = order.createOrder(new String[] {color});
+        Response response = orderClient.createOrder(new String[] {color});
         orderTrack = response.then().extract().body().path("track");
 
         response.then().assertThat().statusCode(201);

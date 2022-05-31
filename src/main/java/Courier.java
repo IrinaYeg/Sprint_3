@@ -2,8 +2,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 public class Courier {
 
-    public final String login;
 
+    public final String login;
     public final String password;
 
     public final String firstName;

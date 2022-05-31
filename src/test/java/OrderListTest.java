@@ -10,13 +10,13 @@ import static org.hamcrest.Matchers.*;
 
 public class OrderListTest {
 
-    private final Order order = new Order();
+    private final OrderClient orderClient = new OrderClient();
 
     @Test
     @DisplayName("Проверка, что в тело ответа возвращается список и он не пустой.")
     @Description("Тест  GET /api/v1/orders")
     public void checkNonEmptyListIsReturned() {
-        ValidatableResponse response =  order.getOrderList();
+        ValidatableResponse response =  orderClient.getOrderList();
         List<Object> orderList = response.extract().jsonPath().getList("orders");
 
         response.assertThat().statusCode(200);
@@ -27,7 +27,7 @@ public class OrderListTest {
     @DisplayName("Проверка, что в теле ответа номер track не пустой.")
     @Description("Тест  GET /api/v1/orders")
     public void checkTrackIsNotEmpty() {
-        ValidatableResponse response =  order.getOrderList();
+        ValidatableResponse response =  orderClient.getOrderList();
 
         response.assertThat().body("orders.track", notNullValue());
     }
